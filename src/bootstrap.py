@@ -25,6 +25,8 @@ if app == 'openclaw':
     if not p.exists():
         write_new(p, json.dumps(config, indent=2) + '\n')
         write_new(Path('/root/LOCAL-LOGIN.txt'), 'OpenClaw: http://127.0.0.1:18789/\nToken: ' + token + '\n')
+    # Keep the rootfs safe for plugin temp workspaces; /tmp is mounted 1777 too.
+    os.chmod('/tmp', 0o1777)
 else:
     home = Path('/root/.hermes')
     home.mkdir(mode=0o700, exist_ok=True)
@@ -35,8 +37,25 @@ else:
             'commitDate': None, 'branch': None, 'dirty': False, 'source': 'ci',
             'distribution': 'docker', 'updateMechanism': 'external',
             'baseVersion': '0.22.5', 'displayVersion': '0.22.5', 'distance': 0,
-            'payload': 'bootstrap', 'tag': None
+            'payload': 'bootstrap', 'pmRuntime': '/root/.hermes/installs/ffad2f5543956651/pm-runtime', 'tag': None
         }, indent=2) + '\n')
+    else:
+        try:
+            d=json.loads(stamp.read_text())
+            d['pmRuntime']='/root/.hermes/installs/ffad2f5543956651/pm-runtime'
+            stamp.write_text(json.dumps(d,indent=2)+'\n')
+        except Exception:
+            pass
+    pmroot=Path('/root/.hermes/installs/ffad2f5543956651/pm-runtime')
+    selected=pmroot/'selected.json'
+    try:
+        gen=json.loads(selected.read_text()).get('generation','')
+        if gen.startswith('generations/'):
+            marker=pmroot/'pm-runtime.json'
+            marker.write_text(json.dumps({'python':gen+'/bin/python','sitePackages':gen+'/lib/python3.14/site-packages'})+'\n')
+    except Exception:
+        pass
+    os.chmod('/tmp',0o1777)
     seed = Path('/opt/ksu-agent/home-seed/.hermes')
     if seed.exists():
         for item in seed.iterdir():
