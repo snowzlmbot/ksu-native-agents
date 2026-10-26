@@ -77,7 +77,7 @@ void setup_mounts(const char *r,const char *state,const char *agent,int expose){
  tmpfs(r,"dev/shm","mode=1777,size=256m");
  tmpfs(r,"run","mode=0755,size=32m");tmpfs(r,"tmp","mode=1777,size=512m");
  tmpfs(r,"sys","mode=0555,size=1m");
- snprintf(d,sizeof d,"%s/proc",r);mountfs("proc",d,"proc",MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC,"hidepid=4");
+ snprintf(d,sizeof d,"%s/proc",r);mountfs("proc",d,"proc",MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC,NULL);
  snprintf(s,sizeof s,"%s/home",state);snprintf(d,sizeof d,"%s/root",r);bindpath(s,d,0);
  snprintf(s,sizeof s,"%s/workspace",state);snprintf(d,sizeof d,"%s/workspace",r);bindpath(s,d,0);
  tmpfs(r,"host","mode=0755,size=4m");

@@ -27,10 +27,17 @@ ui_print '- Verifying offline package'
 (cd "$MODPATH" && "$BB" sha256sum -c SHA256SUMS) || abort 'Package hash verification failed'
 chmod 700 "$MODPATH/bin/ksu-agent"
 ROOT=$STATE/versions/$VERSION
+ACTIVE_VERSION=$VERSION
 if [ -e "$ROOT" ] || [ -L "$ROOT" ]; then
   check_dir "$ROOT"
   [ -f "$ROOT/opt/ksu-agent/payload-complete" ] && [ ! -L "$ROOT/opt/ksu-agent/payload-complete" ] || abort 'Existing version incomplete; preserved, not overwritten'
+elif [ -d "$STATE/versions/0.1.0" ] && [ ! -L "$STATE/versions/0.1.0" ] && [ -f "$STATE/versions/0.1.0/opt/ksu-agent/payload-complete" ]; then
+  # Device already has the verified Ubuntu payload; never copy it again during install.
+  ROOT=$STATE/versions/0.1.0
+  ACTIVE_VERSION=0.1.0
+  ui_print '- Reusing verified existing Ubuntu payload'
 else
+  [ -f "$MODPATH/payload/rootfs.tar.xz" ] || abort 'Ubuntu payload missing and no verified existing rootfs'
   STAGE=$STATE/versions/.$VERSION.pending.$$
   [ ! -e "$STAGE" ] && [ ! -L "$STAGE" ] || abort 'Staging path exists'
   mkdir -m 700 "$STAGE" || abort 'Cannot create empty staging'
@@ -57,7 +64,7 @@ if [ -e "$STATE/current" ] || [ -L "$STATE/current" ]; then
 fi
 NEXT=$STATE/.current.$$
 [ ! -e "$NEXT" ] && [ ! -L "$NEXT" ] || abort 'Pointer staging exists'
-ln -s "versions/$VERSION" "$NEXT" || abort 'Cannot create version pointer'
+ln -s "versions/$ACTIVE_VERSION" "$NEXT" || abort 'Cannot create version pointer'
 "$BB" mv -Tf "$NEXT" "$STATE/current" || abort 'Cannot switch version'
 # Only module-owned scripts/binary; never recurse into state or host mappings.
 for script in service.sh uninstall.sh action.sh agentctl; do chmod 700 "$MODPATH/$script"; done
