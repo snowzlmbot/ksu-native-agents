@@ -7,6 +7,9 @@ R=$STATE/versions/0.1.0
 chmod 755 "$R"; chmod 1777 "$R/tmp"
 # Only bounded, module-owned cache cleanup. Never touch config, sessions, secrets, rootfs, or host mounts.
 find "$R/tmp" -mindepth 1 -maxdepth 1 -xdev -mtime +2 -exec rm -rf -- {} + 2>/dev/null || true
+find "$R/root/.npm/_cacache" -type f -mtime +14 -delete 2>/dev/null || true
+rm -f "$R/var/cache/apt/pkgcache.bin" "$R/var/cache/apt/srcpkgcache.bin" "$R/opt/hermes-source.tgz" 2>/dev/null || true
+find "$R/var/cache/apt/archives" -type f -mtime +2 -delete 2>/dev/null || true
 find "$STATE/run" -maxdepth 1 -type f -name '*.old' -mtime +3 -delete 2>/dev/null || true
 if [ "$APP" = hermes ]; then
  G=$R/opt/ksu-hermes-runtime/installs/ffad2f5543956651/pm-runtime
