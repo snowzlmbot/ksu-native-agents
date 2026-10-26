@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, hashlib, json, os, posixpath, re, stat, subprocess, tarfile, tempfile, zipfile
 from pathlib import Path
-VERSION='0.1.0-rc5'; CODE=105
+VERSION='0.1.0-rc6'; CODE=106
 APPS={
  'openclaw': {'id':'ksu_openclaw','upstream':'OpenClaw 2026.10.7','port':18789},
  'hermes': {'id':'ksu_hermes','upstream':'Hermes Agent v0.22.5 commit bf0203a794a07aac3ff764972ab9087baa4e4f4e','port':9119},
@@ -46,13 +46,15 @@ def make(app,rootfs,binary,out,include_payload=True):
  with tempfile.TemporaryDirectory(prefix='ksu-package-') as td:
   t=Path(td); mod=t/'module'; (mod/'bin').mkdir(parents=True); (mod/'payload').mkdir()
   common=Path(__file__).parents[1]/'module/common'
-  for name in ('service.sh','uninstall.sh','action.sh','agentctl','boot-completed.sh'):
+  for name in ('service.sh','uninstall.sh','action.sh','agentctl','termux','boot-completed.sh'):
    text=(common/name).read_text().replace('@APP@',app)
    (mod/name).write_text(text); os.chmod(mod/name,0o700)
   custom=(common/'customize.sh').read_text().replace('@APP@',app).replace('VERSION=0.1.0-rc1',f'VERSION={VERSION}')
   (mod/'customize.sh').write_text(custom); os.chmod(mod/'customize.sh',0o700)
   web=(mod/'webroot'); web.mkdir(); (web/'index.html').write_text((common/'webroot/index.html').read_text().replace('@APP@',app))
-  (mod/'skip_mount').write_text('')
+  (mod/'agentctl').write_text((common/'agentctl').read_text().replace('@APP@',app)); os.chmod(mod/'agentctl',0o700)
+  # Native Termux/MT-facing command launcher with bounded logs and storage diagnostics.
+  (mod/'termux').write_text((common/'termux').read_text().replace('@APP@',app)); os.chmod(mod/'termux',0o700)
   prop=f'id={APPS[app]["id"]}\nname=KSU Native {app}\nversion={VERSION}\nversionCode={CODE}\nauthor=snowzlmbot\nupdateJson=https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/updates/{app}.json\ndescription=Ubuntu ARM64 native {app}; private mount namespace; persistent host RW mappings; data retained on uninstall\n'
   (mod/'module.prop').write_text(prop)
   import shutil

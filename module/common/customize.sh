@@ -67,7 +67,7 @@ NEXT=$STATE/.current.$$
 ln -s "versions/$ACTIVE_VERSION" "$NEXT" || abort 'Cannot create version pointer'
 "$BB" mv -Tf "$NEXT" "$STATE/current" || abort 'Cannot switch version'
 # Only module-owned scripts/binary; never recurse into state or host mappings.
-for script in service.sh uninstall.sh action.sh agentctl; do chmod 700 "$MODPATH/$script"; done
+for script in service.sh uninstall.sh action.sh agentctl termux; do chmod 700 "$MODPATH/$script"; done
 ui_print "- $APP installed. Default: boot auto-start, UID0, host read/write."
 ui_print "- Persistent data: $STATE (also retained on uninstall)"
 ui_print '- Model credentials are configured locally after startup.'

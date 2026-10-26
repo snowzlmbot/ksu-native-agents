@@ -1,0 +1,24 @@
+#!/system/bin/sh
+MODDIR=${0%/*}
+APP=@APP@
+BIN=$MODDIR/bin/ksu-agent
+STATE=/data/adb/ai-containers/$APP
+[ "$(id -u)" = 0 ] || { echo '需要 root：su'; exit 1; }
+cmd=${1:-shell}; shift 2>/dev/null || true
+case "$cmd" in
+  shell) exec "$BIN" "$APP" exec /bin/bash -li;;
+  exec) [ "$#" -gt 0 ] || { echo '用法: termux exec COMMAND...'; exit 2; }; exec "$BIN" "$APP" exec "$@";;
+  model) exec "$BIN" "$APP" exec /bin/bash -lc "/opt/ksu-agent/model-quick.sh ${1:-show}";;
+  status|start|stop|restart) exec "$MODDIR/agentctl" "$cmd" "$@";;
+  storage)
+    df -h /data /storage/emulated/0
+    du -sh "$STATE"/* 2>/dev/null | /data/adb/ksu/bin/busybox sort -k1,1h | tail -n 20
+    ;;
+  clean-cache)
+    # Only remove module-owned caches; never remove home, sessions, config, secrets, rootfs or host paths.
+    "$BIN" "$APP" exec /bin/bash -lc 'rm -rf /root/.cache/* /tmp/* /var/cache/apt/archives/* 2>/dev/null || true; find /root/.npm/_cacache -type f -mtime +14 -delete 2>/dev/null || true'
+    echo '已清理模块缓存；用户数据未动。'
+    ;;
+  logs) tail -n "${1:-100}" "$STATE/run/supervisor.log";;
+  *) echo '用法: termux shell|exec CMD...|model show|status|start|stop|restart|storage|clean-cache|logs [N]'; exit 2;;
+esac
