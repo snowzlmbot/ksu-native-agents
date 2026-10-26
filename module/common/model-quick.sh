@@ -6,7 +6,7 @@ if [ "$app" = hermes ]; then
  cfg=/root/.hermes/config.yaml
  case "$action" in
   show) sed -E 's/(api_key|password|secret|token):.*/\1: <redacted>/' "$cfg" 2>/dev/null || true;;
-  local) /usr/local/bin/hermes config set model.provider custom; /usr/local/bin/hermes config set model.default "${MODEL_ID:?MODEL_ID required}"; /usr/local/bin/hermes config set model.base_url "${MODEL_BASE_URL:?MODEL_BASE_URL required}"; echo 'Hermes model route saved; put API key in .env via Termux.';;
+  local) /usr/local/bin/hermes config set model.provider custom; /usr/local/bin/hermes config set model.default "${MODEL_ID:?MODEL_ID required}"; /usr/local/bin/hermes config set model.base_url "${MODEL_BASE_URL:?MODEL_BASE_URL required}"; /usr/local/bin/hermes config set model.key_env "${MODEL_KEY_ENV:-OPENAI_API_KEY}"; echo 'Hermes model route saved; put API key in .env via Termux.';;
   *) echo 'model show|local'; exit 2;;
  esac
 else
