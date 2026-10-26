@@ -1,0 +1,24 @@
+#!/system/bin/sh
+MODDIR=${0%/*}
+APP=@APP@
+BIN=$MODDIR/bin/ksu-agent
+STATE=/data/adb/ai-containers/$APP
+[ "$(id -u)" = 0 ] || { echo 'Use this command from a root terminal'; exit 1; }
+op=${1:-shell}
+[ "$#" -eq 0 ] || shift
+case "$op" in
+  status|stop) exec "$BIN" "$APP" "$op";;
+  start) "$BIN" "$APP" supervise </dev/null >/dev/null 2>&1 & ;;
+  restart)
+    "$BIN" "$APP" stop || exit 1
+    i=0
+    while [ "$i" -lt 30 ]; do
+      case "$("$BIN" "$APP" status)" in *' running '*) /data/adb/ksu/bin/busybox sleep 1;; *) break;; esac
+      i=$((i+1))
+    done
+    [ "$i" -lt 30 ] || { echo 'Stop did not finish; all data retained'; exit 1; }
+    "$BIN" "$APP" supervise </dev/null >/dev/null 2>&1 & ;;
+  shell) exec "$BIN" "$APP" exec /bin/bash -i;;
+  exec) exec "$BIN" "$APP" exec "$@";;
+  *) echo 'Usage: agentctl status|start|stop|restart|shell|exec COMMAND...'; exit 2;;
+esac

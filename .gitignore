@@ -1,0 +1,12 @@
+# Generated runtime artifacts are never committed.
+cache/
+build/
+dist/*.tar.xz
+dist/*.zip
+dist/*.sha256
+research/*/sources/
+/var/
+*.orig
+*.log
+.env
+*token*
