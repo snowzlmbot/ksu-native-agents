@@ -41,6 +41,7 @@ def main():
         assert r.stdout.splitlines()==['hermes','exec','/bin/bash','/opt/ksu-agent/model-quick.sh',*args]
         done('MT/Termux multi-argument forwarding')
     out=PROJECT/'dist/release-validation.json'
+    out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps({'ok':True,'scope':'offline regression; not a device install or live inference test','checks':checks},ensure_ascii=False,indent=2)+'\n')
 
 if __name__=='__main__': main()

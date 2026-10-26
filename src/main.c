@@ -24,7 +24,7 @@
 #endif
 
 static const char *app;
-static char state[PATH_MAX], root[PATH_MAX], run[PATH_MAX];
+static char state[128], root[PATH_MAX], run[256];
 static volatile sig_atomic_t ending = 0;
 
 static void onterm(int sig) { (void)sig; ending = 1; }
