@@ -2,6 +2,6 @@
   "version": "0.1.0-rc10",
   "versionCode": 110,
   "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc10/ksu_openclaw-0.1.0-rc10-update.zip",
-  "zipSha256": "103ee7dca19b6772ce6848516a22b2ea8a8c9b691c940e86d0ccd80539cdaa22",
+  "zipSha256": "a9c64618d42bc5f7858c73cd2bc775d62d2387162de33ef327d294d8da91b54f",
   "changelog": "https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/docs/RELEASE-v0.1.0-rc10.md"
 }

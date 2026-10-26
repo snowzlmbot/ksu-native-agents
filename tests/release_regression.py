@@ -37,7 +37,9 @@ def main():
         (t/'bin/ksu-agent').write_text('#!/bin/sh\nfor a in "$@"; do printf "%s\\n" "$a"; done\n')
         (t/'bin/ksu-agent').chmod(0o700)
         args=['set']+[base64.b64encode(x.encode()).decode() for x in ('custom','qwen/test-model','https://example.test/v1','KSU_MODEL_API_KEY')]
-        r=subprocess.run(['sh',str(t/'termux'),'model',*args],check=True,capture_output=True,text=True)
+        invoke_cmd=['sh',str(t/'termux'),'model',*args]
+        if os.getuid()!=0: invoke_cmd=['sudo','--',*invoke_cmd]
+        r=subprocess.run(invoke_cmd,check=True,capture_output=True,text=True)
         assert r.stdout.splitlines()==['hermes','exec','/bin/bash','/opt/ksu-agent/model-quick.sh',*args]
         done('MT/Termux multi-argument forwarding')
     out=PROJECT/'dist/release-validation.json'

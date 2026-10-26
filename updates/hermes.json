@@ -2,6 +2,6 @@
   "version": "0.1.0-rc10",
   "versionCode": 110,
   "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc10/ksu_hermes-0.1.0-rc10-update.zip",
-  "zipSha256": "8cbcc00726dc4977b0db77296d90278c92632f9f8e08322e3821e3d00b82476f",
+  "zipSha256": "b51780087f9529aadf6b02d7894ae92b4d8e5270008d6c89b49275913a837713",
   "changelog": "https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/docs/RELEASE-v0.1.0-rc10.md"
 }
