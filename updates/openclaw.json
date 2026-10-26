@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0-rc10",
-  "versionCode": 110,
-  "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc10/ksu_openclaw-0.1.0-rc10-update.zip",
-  "zipSha256": "a9c64618d42bc5f7858c73cd2bc775d62d2387162de33ef327d294d8da91b54f",
-  "changelog": "https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/docs/RELEASE-v0.1.0-rc10.md"
+  "version": "0.1.0-rc11",
+  "versionCode": 111,
+  "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc11/ksu_openclaw-0.1.0-rc11-update.zip",
+  "zipSha256": "efc878d801798375040427f75b3698484a7c247ef73757c0ed5d8014197984f5",
+  "changelog": "https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/docs/RELEASE-v0.1.0-rc11.md"
 }
