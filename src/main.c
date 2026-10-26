@@ -78,7 +78,18 @@ static int send_pidfd(int fd, int sig) {
 
 static void safe_unlink(const char *path) {
     struct stat st;
-    if (lstat(path, &st) == 0) (void)unlink(path);
+    if (lstat(path, &st) == 0 && S_ISREG(st.st_mode) && st.st_uid == 0 && st.st_nlink == 1) (void)unlink(path);
+}
+
+static void rotate_log_if_large(const char *path) {
+    struct stat st;
+    if (lstat(path, &st) < 0) return;
+    if (!S_ISREG(st.st_mode) || st.st_uid != 0 || st.st_nlink != 1) { errno = EPERM; die_msg("log type"); }
+    if (st.st_size < 8 * 1024 * 1024) return;
+    char old[PATH_MAX]; int n = snprintf(old, sizeof old, "%s.old", path);
+    if (n < 0 || (size_t)n >= sizeof old) { errno = ENAMETOOLONG; die_msg("log path"); }
+    safe_unlink(old);
+    if (rename(path, old) < 0) die_msg("rotate log");
 }
 
 static int write_pid_record(void) {
@@ -187,6 +198,7 @@ static int supervise(void) {
     signal(SIGHUP, SIG_IGN);
     if (write_pid_record() < 0) die_msg("write pid record");
     char p[PATH_MAX]; snprintf(p, sizeof p, "%s/supervisor.log", run);
+    rotate_log_if_large(p);
     int logfd = open(p, O_CREAT | O_WRONLY | O_APPEND | O_NOFOLLOW | O_CLOEXEC, 0600);
     must(logfd, "open log");
     struct stat lst; must(fstat(logfd, &lst), "stat log");
