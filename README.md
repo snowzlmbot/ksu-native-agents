@@ -24,7 +24,7 @@
 
 [最新 GitHub Release（实际 ZIP）](https://github.com/snowzlmbot/ksu-native-agents/releases/latest)
 
-rc10 提供每个应用的 `-full.zip` 完整包与 `-update.zip` 轻量升级包。**当前已装本项目并保留 Ubuntu 的设备用 update；新设备用 full。** 详情见 [rc10 发布说明](docs/RELEASE-v0.1.0-rc10.md)。
+rc11 提供每个应用的 `-full.zip` 完整包与 `-update.zip` 轻量升级包。**当前已装本项目并保留 Ubuntu 的设备用 update；新设备用 full。** 详情见 [rc11 发布说明](docs/RELEASE-v0.1.0-rc11.md)。
 
 ## 运行验收
 
@@ -40,8 +40,8 @@ Hermes：`127.0.0.1:9119/api/status` 应为 `overall=ok`、`auth_required=true`�
 
 ```sh
 make
-python3 scripts/package.py --app openclaw --rootfs dist/openclaw-rootfs.tar.xz --binary build/ksu-agent --output dist/ksu_openclaw-0.1.0-rc10-full.zip
-python3 scripts/package.py --app hermes --rootfs dist/hermes-rootfs.tar.xz --binary build/ksu-agent --output dist/ksu_hermes-0.1.0-rc10-full.zip
+python3 scripts/package.py --app openclaw --rootfs dist/openclaw-rootfs.tar.xz --binary build/ksu-agent --output dist/ksu_openclaw-0.1.0-rc11-full.zip
+python3 scripts/package.py --app hermes --rootfs dist/hermes-rootfs.tar.xz --binary build/ksu-agent --output dist/ksu_hermes-0.1.0-rc11-full.zip
 # 已有环境的轻量升级包：追加 --device-local，并将输出命名为 -update.zip
 python3 tests/release_regression.py
 python3 tests/verify_release.py

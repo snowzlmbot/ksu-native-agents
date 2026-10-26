@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, hashlib, json, os, posixpath, re, stat, subprocess, tarfile, tempfile, zipfile
 from pathlib import Path
-VERSION='0.1.0-rc10'; CODE=110
+VERSION='0.1.0-rc11'; CODE=111
 APPS={
  'openclaw': {'id':'ksu_openclaw','upstream':'OpenClaw 2026.10.7','port':18789},
  'hermes': {'id':'ksu_hermes','upstream':'Hermes Agent v0.22.5 commit bf0203a794a07aac3ff764972ab9087baa4e4f4e','port':9119},
