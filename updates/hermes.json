@@ -1,0 +1,7 @@
+{
+  "version": "0.1.0-rc1",
+  "versionCode": 101,
+  "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc1/ksu_hermes-0.1.0-rc1.zip",
+  "zipSha256": "dd37afd218d5b45e7c69c495f8cd159fc9438eb089686350974e59332df21e9d",
+  "changelog": "Ubuntu 26.04.1 ARM64 Hermes Agent v0.22.5; private mount namespace; basic dashboard auth; host RW mappings; data retained on uninstall."
+}

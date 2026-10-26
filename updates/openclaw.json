@@ -1,0 +1,7 @@
+{
+  "version": "0.1.0-rc1",
+  "versionCode": 101,
+  "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc1/ksu_openclaw-0.1.0-rc1.zip",
+  "zipSha256": "53f1f348ba1cb2fe87b1794c0c1d2704a7c9e501ed3e4d75a36ed36e611c9536",
+  "changelog": "Ubuntu 26.04.1 ARM64 OpenClaw 2026.10.7; private mount namespace; Landlock/cgroup lifecycle; host RW mappings; data retained on uninstall."
+}

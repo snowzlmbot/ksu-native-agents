@@ -52,7 +52,8 @@ def make(app,rootfs,binary,out):
   custom=(common/'customize.sh').read_text().replace('@APP@',app)
   (mod/'customize.sh').write_text(custom); os.chmod(mod/'customize.sh',0o700)
   (mod/'skip_mount').write_text('')
-  (mod/'module.prop').write_text(f'id={APPS[app]["id"]}\nname=KSU Native {app}\nversion={VERSION}\nversionCode={CODE}\nauthor=snowzlmbot\ndescription=Ubuntu ARM64 native {app}; private mount namespace; persistent host RW mappings; data retained on uninstall\n')
+  prop=f'id={APPS[app]["id"]}\nname=KSU Native {app}\nversion={VERSION}\nversionCode={CODE}\nauthor=snowzlmbot\nupdateJson=https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/main/updates/{app}.json\ndescription=Ubuntu ARM64 native {app}; private mount namespace; persistent host RW mappings; data retained on uninstall\n'
+  (mod/'module.prop').write_text(prop)
   import shutil
   shutil.copy2(binary,mod/'bin/ksu-agent'); os.chmod(mod/'bin/ksu-agent',0o700)
   shutil.copy2(rootfs,mod/'payload/rootfs.tar.xz')
