@@ -53,6 +53,7 @@ def make(app,rootfs,binary,out,include_payload=True):
   (mod/'customize.sh').write_text(custom); os.chmod(mod/'customize.sh',0o700)
   web=(mod/'webroot'); web.mkdir(); (web/'index.html').write_text((common/'webroot/index.html').read_text().replace('@APP@',app))
   (mod/'agentctl').write_text((common/'agentctl').read_text().replace('@APP@',app)); os.chmod(mod/'agentctl',0o700)
+  (mod/'model-quick.sh').write_text((common/'model-quick.sh').read_text()); os.chmod(mod/'model-quick.sh',0o700)
   # Native Termux/MT-facing command launcher with bounded logs and storage diagnostics.
   (mod/'termux').write_text((common/'termux').read_text().replace('@APP@',app)); os.chmod(mod/'termux',0o700)
   prop=f'id={APPS[app]["id"]}\nname=KSU Native {app}\nversion={VERSION}\nversionCode={CODE}\nauthor=snowzlmbot\nupdateJson=https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/updates/{app}.json\ndescription=Ubuntu ARM64 native {app}; private mount namespace; persistent host RW mappings; data retained on uninstall\n'
