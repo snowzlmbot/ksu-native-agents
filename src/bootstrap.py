@@ -28,6 +28,7 @@ if app == 'openclaw':
     # Keep the rootfs safe for plugin temp workspaces; /tmp is mounted 1777 too.
     os.chmod('/tmp', 0o1777)
 else:
+    os.environ.setdefault('HERMES_WEB_LOCALE','zh')
     home = Path('/root/.hermes')
     home.mkdir(mode=0o700, exist_ok=True)
     stamp = Path('/opt/hermes-agent/install-stamp.json')
