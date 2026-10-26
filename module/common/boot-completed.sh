@@ -21,9 +21,9 @@ open(f'{g}/pm-runtime.json','w').write(json.dumps({'python':f'generations/{gen}/
 PY
   fi
  fi
- for f in "$R"/opt/hermes-agent/hermes_cli/web_dist/assets/i18n-*.js; do
-  [ -f "$f" ] || continue
-  /data/adb/ksu/bin/busybox sed -i 's/return`en`/return`zh`/' "$f" 2>/dev/null || true
- done
+  for f in "$R"/opt/hermes-agent/hermes_cli/web_dist/assets/i18n-*.js; do
+   [ -f "$f" ] || continue
+   "$R/opt/ksu-hermes-runtime/tools/python-3.14.9+20261021-linux-arm64/bin/python3" "$R/opt/ksu-agent/force-hermes-zh.py" 2>/dev/null || true
+  done
 fi
 
