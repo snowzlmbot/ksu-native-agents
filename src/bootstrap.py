@@ -47,13 +47,26 @@ else:
             stamp.write_text(json.dumps(d,indent=2)+'\n')
         except Exception:
             pass
+    # Links must exist before resolving the packaged PM contract on a fresh install.
+    for name in ('tools', 'installs'):
+        dst = home / name
+        if not dst.exists() and not dst.is_symlink():
+            dst.symlink_to('/opt/ksu-hermes-runtime/' + name)
     pmroot=Path('/root/.hermes/installs/ffad2f5543956651/pm-runtime')
     selected=pmroot/'selected.json'
     try:
         gen=json.loads(selected.read_text()).get('generation','')
-        if gen.startswith('generations/'):
-            marker=pmroot/'pm-runtime.json'
-            marker.write_text(json.dumps({'python':gen+'/bin/python','sitePackages':gen+'/lib/python3.14/site-packages'})+'\n')
+        generation = Path(gen)
+        if len(generation.parts)==2 and generation.parts[0]=='generations' and all(c in '0123456789abcdef' for c in generation.parts[1]):
+            chosen=pmroot/generation
+            if (chosen/'bin/python').is_file() and (chosen/'lib/python3.14/site-packages').is_dir():
+                marker=pmroot/'pm-runtime.json'
+                value=json.dumps({'python':gen+'/bin/python','sitePackages':gen+'/lib/python3.14/site-packages'})+'\n'
+                if not marker.exists() or marker.read_text()!=value:
+                    temp=pmroot/'.pm-runtime.ksu.tmp'
+                    fd=os.open(temp,os.O_CREAT|os.O_WRONLY|os.O_TRUNC|os.O_NOFOLLOW,0o600)
+                    with os.fdopen(fd,'w') as f: f.write(value)
+                    os.replace(temp,marker)
     except Exception:
         pass
     os.chmod('/tmp',0o1777)
@@ -91,3 +104,5 @@ else:
             subprocess.run(['/usr/local/bin/hermes','config','set',key,value], check=True)
         write_new(stamp, '1\n')
 print(app + ' initialization complete (credentials not displayed)')
+if app == 'hermes':
+    subprocess.run(['/usr/bin/python3','/opt/ksu-agent/force-hermes-zh.py'],check=True)

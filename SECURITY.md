@@ -7,7 +7,7 @@
 - 所有运行挂载仅在新建 mount namespace 内，第一步将 `/` 改为 recursively private；不在 init 命名空间挂载。
 - 两个独立 rootfs；固定绝对状态目录；逐级拒绝软链接；宿主目录只映射到 `/host/*`。
 - 不递归卸载/删除 rootfs 或宿主目录；卸载脚本仅停止对应程序并保留全部数据。
-- 更新采用新 versions/<版本> 目录，校验成功再原子切 current；旧版本保留，禁止后台自动更新。
+- 首次安装在新 versions/<版本> 目录解包；已有完整环境的模块升级复用受控 current，并逐文件原子部署运行脚本，不重新解包覆盖 rootfs、home 或工作区；禁止后台自动更新。
 - 默认开机自启，但可用 KSU 禁用和 NO_AUTOSTART 急停；失败最多4次，端口仅loopback；不kill端口占用者。
 - 缩减capabilities并用seccomp拒绝挂载/卸载/切命名空间/chroot/reboot/装载内核模块等，保留uid0和文件DAC权限。
 - 不向容器映射宿主block设备或Android su入口。

@@ -18,7 +18,13 @@
 /data/adb/ai-containers/hermes/
 ```
 
-模块目录被 KernelSU 生命周期管理，不存用户数据。升级在新的 `versions/<version>` 目录解包并校验后切换 `current`；旧版本保留。
+模块目录被 KernelSU 生命周期管理，不存用户数据。首次安装解包到独立版本目录；升级优先复用受控 `current` 的完整 Ubuntu 环境，仅原子部署模块运行脚本，避免重复 rootfs 占空间。卸载保留全部运行数据。
+
+## 安装包下载
+
+[最新 GitHub Release（实际 ZIP）](https://github.com/snowzlmbot/ksu-native-agents/releases/latest)
+
+rc10 提供每个应用的 `-full.zip` 完整包与 `-update.zip` 轻量升级包。**当前已装本项目并保留 Ubuntu 的设备用 update；新设备用 full。** 详情见 [rc10 发布说明](docs/RELEASE-v0.1.0-rc10.md)。
 
 ## 运行验收
 
@@ -34,8 +40,11 @@ Hermes：`127.0.0.1:9119/api/status` 应为 `overall=ok`、`auth_required=true`�
 
 ```sh
 make
-python3 scripts/package.py --app openclaw --rootfs dist/openclaw-rootfs.tar.xz --binary build/ksu-agent --output dist/ksu_openclaw-0.1.0-rc1.zip
-python3 scripts/package.py --app hermes --rootfs dist/hermes-rootfs.tar.xz --binary build/ksu-agent --output dist/ksu_hermes-0.1.0-rc1.zip
+python3 scripts/package.py --app openclaw --rootfs dist/openclaw-rootfs.tar.xz --binary build/ksu-agent --output dist/ksu_openclaw-0.1.0-rc10-full.zip
+python3 scripts/package.py --app hermes --rootfs dist/hermes-rootfs.tar.xz --binary build/ksu-agent --output dist/ksu_hermes-0.1.0-rc10-full.zip
+# 已有环境的轻量升级包：追加 --device-local，并将输出命名为 -update.zip
+python3 tests/release_regression.py
+python3 tests/verify_release.py
 ```
 
 `package.py` 会拒绝绝对路径、`..`、设备节点和 FIFO tar 成员，生成 KernelSU ZIP、SHA256 清单和 SBOM 元数据。不要把 `home/`、`.env`、token、数据库、聊天记录或 rootfs 开发缓存提交到仓库。

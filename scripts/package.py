@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, hashlib, json, os, posixpath, re, stat, subprocess, tarfile, tempfile, zipfile
 from pathlib import Path
-VERSION='0.1.0-rc9'; CODE=109
+VERSION='0.1.0-rc10'; CODE=110
 APPS={
  'openclaw': {'id':'ksu_openclaw','upstream':'OpenClaw 2026.10.7','port':18789},
  'hermes': {'id':'ksu_hermes','upstream':'Hermes Agent v0.22.5 commit bf0203a794a07aac3ff764972ab9087baa4e4f4e','port':9119},
@@ -55,6 +55,14 @@ def make(app,rootfs,binary,out,include_payload=True):
   (mod/'agentctl').write_text((common/'agentctl').read_text().replace('@APP@',app)); os.chmod(mod/'agentctl',0o700)
   (mod/'model-quick.sh').write_text((common/'model-quick.sh').read_text()); os.chmod(mod/'model-quick.sh',0o700)
   (mod/'force-hermes-zh.py').write_text((Path(__file__).parents[1]/'src/force-hermes-zh.py').read_text()); os.chmod(mod/'force-hermes-zh.py',0o700)
+  (mod/'skip_mount').write_text('')
+  runtime=mod/'runtime'; runtime.mkdir()
+  for name in ('bootstrap.py','start.sh','force-hermes-zh.py','model-config.py','storage-clean.py'):
+   shutil_src=Path(__file__).parents[1]/'src'/name
+   (runtime/name).write_text(shutil_src.read_text()); os.chmod(runtime/name,0o700)
+  (runtime/'model-quick.sh').write_text((common/'model-quick.sh').read_text()); os.chmod(runtime/'model-quick.sh',0o700)
+  (mod/'deploy-runtime.sh').write_text((common/'deploy-runtime.sh').read_text().replace('@APP@',app)); os.chmod(mod/'deploy-runtime.sh',0o700)
+  (mod/'native').write_text((common/'native').read_text().replace('@APP@',app)); os.chmod(mod/'native',0o700)
   # Native Termux/MT-facing command launcher with bounded logs and storage diagnostics.
   (mod/'termux').write_text((common/'termux').read_text().replace('@APP@',app)); os.chmod(mod/'termux',0o700)
   prop=f'id={APPS[app]["id"]}\nname=KSU Native {app}\nversion={VERSION}\nversionCode={CODE}\nauthor=snowzlmbot\nupdateJson=https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/updates/{app}.json\ndescription=Ubuntu ARM64 native {app}; private mount namespace; persistent host RW mappings; data retained on uninstall\n'
@@ -64,10 +72,10 @@ def make(app,rootfs,binary,out,include_payload=True):
   if include_payload:
    shutil.copy2(rootfs,mod/'payload/rootfs.tar.xz')
    (mod/'payload/README.txt').write_text('Verified Ubuntu 26.04.1 ARM64 rootfs; payload marker opt/ksu-agent/payload-complete required.\\n')
-   (mod/'payload/MANIFEST.json').write_text(json.dumps({'app':app,'moduleVersion':VERSION,'upstream':APPS[app]['upstream'],'rootfsSha256':sha(rootfs),'agentSha256':sha(binary)},indent=2)+'\\n')
+   (mod/'payload/MANIFEST.json').write_text(json.dumps({'app':app,'moduleVersion':VERSION,'upstream':APPS[app]['upstream'],'rootfsSha256':sha(rootfs),'agentSha256':sha(binary)},indent=2)+'\n')
   else:
    (mod/'payload/README.txt').write_text('Device-local install: reuses an already verified /data/adb/ai-containers payload.\\n')
-   (mod/'payload/MANIFEST.json').write_text(json.dumps({'app':app,'moduleVersion':VERSION,'deviceLocalPayload':True,'agentSha256':sha(binary)},indent=2)+'\\n')
+   (mod/'payload/MANIFEST.json').write_text(json.dumps({'app':app,'moduleVersion':VERSION,'deviceLocalPayload':True,'agentSha256':sha(binary)},indent=2)+'\n')
   sums=[]
   for p in sorted(x for x in mod.rglob('*') if x.is_file() and x.name!='SHA256SUMS'):
    sums.append(f'{sha(p)}  {p.relative_to(mod)}')
@@ -78,7 +86,10 @@ def make(app,rootfs,binary,out,include_payload=True):
     if p.is_file():
      info=zipfile.ZipInfo(str(p.relative_to(mod)).replace(os.sep,'/'))
      info.external_attr=(p.stat().st_mode & 0xffff)<<16
-     z.writestr(info,p.read_bytes(),compress_type=zipfile.ZIP_DEFLATED)
+     if str(p.relative_to(mod)).startswith('payload/rootfs'):
+      z.write(p,p.relative_to(mod),compress_type=zipfile.ZIP_STORED)
+     else:
+      z.writestr(info,p.read_bytes(),compress_type=zipfile.ZIP_DEFLATED)
  print(json.dumps({'output':str(out),'sha256':sha(out),'app':app,'version':VERSION}))
 
 if __name__=='__main__':

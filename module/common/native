@@ -1,0 +1,5 @@
+#!/system/bin/sh
+# Use in a KernelSU-approved root shell; preserves the terminal and argv.
+MODDIR=${0%/*}
+APP=@APP@
+exec "$MODDIR/bin/ksu-agent" "$APP" exec /usr/local/bin/$APP "$@"

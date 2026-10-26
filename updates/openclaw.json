@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0-rc2",
-  "versionCode": 102,
-  "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc2/ksu_openclaw-0.1.0-rc2.zip",
-  "zipSha256": "3e71d2389c19a4367d00ac220b690fca833b3608c417155a467503ff1e1425ca",
-  "changelog": "Rebuilt payload with fixed Hermes stamp/startup bootstrap and master update manifest."
+  "version": "0.1.0-rc10",
+  "versionCode": 110,
+  "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc10/ksu_openclaw-0.1.0-rc10-update.zip",
+  "zipSha256": "103ee7dca19b6772ce6848516a22b2ea8a8c9b691c940e86d0ccd80539cdaa22",
+  "changelog": "https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/docs/RELEASE-v0.1.0-rc10.md"
 }

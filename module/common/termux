@@ -8,7 +8,19 @@ cmd=${1:-shell}; shift 2>/dev/null || true
 case "$cmd" in
   shell) exec "$BIN" "$APP" exec /bin/bash -li;;
   exec) [ "$#" -gt 0 ] || { echo '用法: termux exec COMMAND...'; exit 2; }; exec "$BIN" "$APP" exec "$@";;
-  model) exec "$BIN" "$APP" exec /bin/bash -lc "/opt/ksu-agent/model-quick.sh \"$@\"";;
+  model) [ "$#" -gt 0 ] || set -- show; exec "$BIN" "$APP" exec /bin/bash /opt/ksu-agent/model-quick.sh "$@";;
+  cli) exec "$MODDIR/native" "$@";;
+  panel)
+    while :; do
+      printf '\n%s 控制面板\n1 状态  2 启动  3 停止  4 重启\n5 模型向导  6 模型配置  7 日志  8 存储\n9 原生CLI  10 Ubuntu终端  0 退出\n> ' "$APP"
+      read -r choice || exit 0
+      case "$choice" in
+        1) "$MODDIR/agentctl" status;; 2) "$MODDIR/agentctl" start;;
+        3) "$MODDIR/agentctl" stop;; 4) "$MODDIR/agentctl" restart;;
+        5) "$0" model wizard;; 6) "$0" model show;; 7) "$0" logs;;
+        8) "$0" storage;; 9) "$MODDIR/native";; 10) "$0" shell;; 0) exit 0;;
+      esac
+    done;;
   status|start|stop|restart) exec "$MODDIR/agentctl" "$cmd" "$@";;
   storage)
     df -h /data /storage/emulated/0
@@ -16,9 +28,8 @@ case "$cmd" in
     ;;
   clean-cache)
     # Only remove module-owned caches; never remove home, sessions, config, secrets, rootfs or host paths.
-    "$BIN" "$APP" exec /bin/bash -lc 'rm -rf /root/.cache/* /tmp/* /var/cache/apt/archives/* 2>/dev/null || true; find /root/.npm/_cacache -type f -mtime +14 -delete 2>/dev/null || true'
-    echo '已清理模块缓存；用户数据未动。'
+    exec "$BIN" "$APP" exec /usr/bin/python3 /opt/ksu-agent/storage-clean.py
     ;;
   logs) tail -n "${1:-100}" "$STATE/run/supervisor.log";;
-  *) echo '用法: termux shell|exec CMD...|model show|status|start|stop|restart|storage|clean-cache|logs [N]'; exit 2;;
+  *) echo '用法: termux panel|cli [原生命令...]|shell|exec CMD...|model show|model wizard|model key [ENV]|model set <四个Base64参数>|status|start|stop|restart|storage|clean-cache|logs [N]'; exit 2;;
 esac

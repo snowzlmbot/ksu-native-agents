@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0-rc2",
-  "versionCode": 102,
-  "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc2/ksu_hermes-0.1.0-rc2.zip",
-  "zipSha256": "e3f424bf889969383e163b933dac195e8639a16ace54d28ff32a3e52f18c56a8",
-  "changelog": "Rebuilt payload with fixed Hermes v0.22.5 install stamp/startup bootstrap and master update manifest."
+  "version": "0.1.0-rc10",
+  "versionCode": 110,
+  "zipUrl": "https://github.com/snowzlmbot/ksu-native-agents/releases/download/v0.1.0-rc10/ksu_hermes-0.1.0-rc10-update.zip",
+  "zipSha256": "8cbcc00726dc4977b0db77296d90278c92632f9f8e08322e3821e3d00b82476f",
+  "changelog": "https://raw.githubusercontent.com/snowzlmbot/ksu-native-agents/master/docs/RELEASE-v0.1.0-rc10.md"
 }
