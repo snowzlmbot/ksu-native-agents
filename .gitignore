@@ -1,11 +1,10 @@
-# Generated runtime artifacts are never committed.
+dist/
+research/
 cache/
 build/
-dist/*.tar.xz
-dist/*.zip
-dist/*.sha256
-research/*/sources/
-/var/
+.learnings/
+__pycache__/
+*.pyc
 *.orig
 *.log
 .env

@@ -28,6 +28,15 @@ if app == 'openclaw':
 else:
     home = Path('/root/.hermes')
     home.mkdir(mode=0o700, exist_ok=True)
+    stamp = Path('/opt/hermes-agent/install-stamp.json')
+    if not stamp.exists():
+        write_new(stamp, json.dumps({
+            'schemaVersion': 2, 'commit': 'bf0203a794a07aac3ff764972ab9087baa4e4f4e',
+            'commitDate': None, 'branch': None, 'dirty': False, 'source': 'ci',
+            'distribution': 'docker', 'updateMechanism': 'external',
+            'baseVersion': '0.22.5', 'displayVersion': '0.22.5', 'distance': 0,
+            'payload': 'bootstrap', 'tag': None
+        }, indent=2) + '\n')
     seed = Path('/opt/ksu-agent/home-seed/.hermes')
     if seed.exists():
         for item in seed.iterdir():
