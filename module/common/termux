@@ -8,7 +8,7 @@ cmd=${1:-shell}; shift 2>/dev/null || true
 case "$cmd" in
   shell) exec "$BIN" "$APP" exec /bin/bash -li;;
   exec) [ "$#" -gt 0 ] || { echo '用法: termux exec COMMAND...'; exit 2; }; exec "$BIN" "$APP" exec "$@";;
-  model) exec "$BIN" "$APP" exec /bin/bash -lc "/opt/ksu-agent/model-quick.sh ${1:-show}";;
+  model) exec "$BIN" "$APP" exec /bin/bash -lc "/opt/ksu-agent/model-quick.sh \"$@\"";;
   status|start|stop|restart) exec "$MODDIR/agentctl" "$cmd" "$@";;
   storage)
     df -h /data /storage/emulated/0
