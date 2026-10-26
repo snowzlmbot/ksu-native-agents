@@ -14,7 +14,7 @@
 #include <sys/prctl.h>
 #include <limits.h>
 #include <time.h>
-#include <stdint.h>
+#include <poll.h>
 
 #ifndef SYS_pidfd_open
 #define SYS_pidfd_open 434
@@ -74,6 +74,12 @@ static int pidfd_for(pid_t pid) {
 
 static int send_pidfd(int fd, int sig) {
     return (int)syscall(SYS_pidfd_send_signal, fd, sig, NULL, 0);
+}
+
+static int wait_pidfd_exit(int fd, int seconds) {
+    struct pollfd p = { .fd = fd, .events = POLLIN | POLLHUP | POLLERR };
+    int r = poll(&p, 1, seconds * 1000);
+    return r > 0 && (p.revents & (POLLIN | POLLHUP | POLLERR));
 }
 
 static void safe_unlink(const char *path) {
@@ -283,6 +289,7 @@ int main(int argc, char **argv) {
         }
         if (live) {
             if (send_pidfd(pfd, SIGTERM) < 0 && errno == ENOSYS) (void)kill(rec.pid, SIGTERM);
+            (void)wait_pidfd_exit(pfd, 20);
             close(pfd);
         }
         return 0;
